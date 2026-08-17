@@ -1,12 +1,13 @@
 import React from 'react';
 import Navbar from '../component/Navbar';
 import Footer from '../component/Footer';
+import Home from '../pages/Home';
 
 const Main = () => {
     return (
         <div>
             <Navbar />
-            <h1 className=' font-black text-7xl underline bg-amber-300'>tailwind</h1>
+            <Home />
             <Footer />
         </div>
     );
