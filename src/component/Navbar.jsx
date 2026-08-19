@@ -1,69 +1,31 @@
 import React from "react";
 import logo from "../assets/web logo khan market.png";
+import { Link } from "react-router-dom";
 
 const Navbar = () => {
   return (
     <div className="w-full bg-base-200 rounded-md shadow-sm">
-      
       <div className="navbar w-full px-2 sm:px-3 lg:px-6 gap-1 sm:gap-2">
-
-        {/* ================= LOGO ================= */}
         <div className="shrink-0">
-          <button className="btn btn-ghost px-0 sm:px-2">
-            <img
-              src={logo}
-              alt="Khan Market"
-              className="w-16 sm:w-20 lg:w-28 rounded-xl"
-            />
-          </button>
+          <Link to="/">
+            <button className="btn btn-ghost px-0 sm:px-2">
+              <img
+                src={logo}
+                alt="Khan Market"
+                className="w-16 sm:w-20 lg:w-28 rounded-xl"
+              />
+            </button>
+          </Link>
         </div>
-
-
-        {/* ================= SEARCH ================= */}
         <div className="flex-1 min-w-0">
           <div className="relative w-full">
-
-            {/* Search Input */}
             <input
               type="search"
               placeholder="Search products..."
-              className="
-                w-full
-                h-9
-                sm:h-10
-                lg:h-12
-
-                rounded-lg
-
-                border-2
-                border-amber-400
-
-                bg-white
-
-                text-gray-900
-                placeholder-gray-500
-
-                text-center
-                text-xs
-                sm:text-sm
-                lg:text-base
-
-                font-medium
-
-                pl-3
-                pr-10
-
-                outline-none
-
-                focus:border-amber-500
-                focus:ring-2
-                focus:ring-amber-200
-
-                transition-all
-              "
-            />
-
-            {/* Search Button - RIGHT SIDE */}
+              className="w-full h-9 sm:h-10 lg:h-12 rounded-lg border-2 border-amber-400 bg-white text-gray-900 placeholder-gray-500 text-center
+                text-xs sm:text-sm lg:text-base font-medium pl-3 pr-10 outline-none focus:border-amber-500
+                focus:ring-2 focus:ring-amber-200 transition-all
+              " />
             <button
               type="button"
               title="Search"
@@ -101,13 +63,9 @@ const Navbar = () => {
                 />
               </svg>
             </button>
-
           </div>
         </div>
-
-
-        {/* ================= CART ================= */}
-        <div className="shrink-0">
+        <Link to="/cart" className="shrink-0">
           <button
             className="
               btn
@@ -133,15 +91,9 @@ const Navbar = () => {
               />
             </svg>
           </button>
-        </div>
-
-
-        {/* ================= PROFILE ================= */}
+        </Link>
         <div className="shrink-0">
-          <button
-            className="btn btn-ghost btn-sm p-1"
-            title="Profile"
-          >
+          <button className="btn btn-ghost btn-sm p-1" title="Profile">
             <img
               src="https://i.pravatar.cc/100?img=12"
               alt="Profile"
@@ -156,7 +108,6 @@ const Navbar = () => {
             />
           </button>
         </div>
-
       </div>
     </div>
   );

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useLoaderData } from "react-router-dom";
+import { Link, useLoaderData } from "react-router-dom";
 
 const ProductDetails = () => {
   const product = useLoaderData();
@@ -29,9 +29,11 @@ const ProductDetails = () => {
     <div className="min-h-screen bg-[#f5f5f3] py-5 md:py-7 px-4">
       <div className="max-w-7xl mx-auto">
         <div className="flex items-center gap-2 text-sm text-gray-500 mb-4">
-          <span className="hover:text-[#b08a20] cursor-pointer transition">
-            Home
-          </span>
+          <Link to="/">
+            <span className="hover:text-[#b08a20] cursor-pointer transition">
+              Home
+            </span>
+          </Link>
           <span className="text-gray-300">/</span>
           <span className="hover:text-[#b08a20] cursor-pointer transition">
             {product.category}
@@ -191,6 +193,7 @@ const ProductDetails = () => {
                 >
                   Add to Cart
                 </button>
+
                 <button
                   disabled={product.stock === 0}
                   className="h-14 rounded-xl bg-gray-950 text-white font-bold hover:bg-[#c49a24] hover:text-black transition duration-300 shadow-[0_8px_20px_rgba(0,0,0,0.15)] disabled:opacity-40 disabled:cursor-not-allowed"
