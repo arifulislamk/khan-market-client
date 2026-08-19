@@ -1,8 +1,12 @@
+import { useMutation, useQuery } from "@tanstack/react-query";
 import React, { useState } from "react";
-import { Link, useLoaderData } from "react-router-dom";
+import { Link, useLoaderData, useNavigate } from "react-router-dom";
+import useAxiosCommon from "../hooks/useAxiosCommon";
 
 const ProductDetails = () => {
   const product = useLoaderData();
+  const axiosPublic = useAxiosCommon();
+  const navigate = useNavigate();
   const [quantity, setQuantity] = useState(1);
 
   const discount = Math.round(
@@ -24,6 +28,27 @@ const ProductDetails = () => {
     ["FAST", "DELIVERY"],
     ["AUTHENTIC", "PRODUCTS"],
   ];
+
+  const { mutate } = useMutation({
+    mutationFn: async (data) => {
+      return await axiosPublic.post("/cart", data);
+    },
+    onSuccess: () => {
+      console.log("post hoisecart data");
+    },
+  });
+
+  const cartdata = { name: " ariful", id: product._id };
+  const handleBuyNow = (e) => {
+    mutate(cartdata, {
+      onSuccess: () => {
+        navigate("/cart");
+      },
+    });
+  };
+  const handleAddCart = (e) => {
+    mutate(cartdata);
+  };
 
   return (
     <div className="min-h-screen bg-[#f5f5f3] py-5 md:py-7 px-4">
@@ -188,6 +213,7 @@ const ProductDetails = () => {
               </div>
               <div className="grid sm:grid-cols-2 gap-3 mt-4">
                 <button
+                  onClick={handleAddCart}
                   disabled={product.stock === 0}
                   className="h-14 rounded-xl border-2 border-gray-900 bg-white text-gray-900 font-bold hover:bg-gray-900 hover:text-white transition duration-300 disabled:opacity-40 disabled:cursor-not-allowed"
                 >
@@ -195,6 +221,7 @@ const ProductDetails = () => {
                 </button>
 
                 <button
+                  onClick={handleBuyNow}
                   disabled={product.stock === 0}
                   className="h-14 rounded-xl bg-gray-950 text-white font-bold hover:bg-[#c49a24] hover:text-black transition duration-300 shadow-[0_8px_20px_rgba(0,0,0,0.15)] disabled:opacity-40 disabled:cursor-not-allowed"
                 >
