@@ -1,7 +1,7 @@
 import { createBrowserRouter } from "react-router";
 import Main from "./layout/Main";
 import Home from "./pages/Home";
-import Product from "./component/Product";
+import ProductDetails from "./component/ProductDetails";
 const router = createBrowserRouter([
   {
     path: "/",
@@ -13,8 +13,8 @@ const router = createBrowserRouter([
       },
       {
         path: "/product/:productId",
-        element: <Product />,
-        loader: ({params}) => fetch(`http://localhost:5000/product/${params.productId}`)
+        element: <ProductDetails />,
+        loader: ({params}) => fetch(`${import.meta.env.VITE_URL}/product/${params.productId}`)
       },
     ],
   },

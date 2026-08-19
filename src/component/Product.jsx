@@ -1,10 +1,21 @@
-import React from "react";
-import data from "../assets/data";
+// import React from "react";
+// import data from "../assets/data";
 import ProductCard from "../component/ProductCard";
+// import axios from "axios";
+import useAxiosCommon from "../hooks/useAxiosCommon";
+import {  useQuery } from "@tanstack/react-query";
 
 const Product = () => {
-  console.log(data, "data");
-  
+  // console.log(data, "data");
+  const axiosPublic = useAxiosCommon();
+
+  const { data: data } = useQuery({
+    queryKey: ["data"],
+    queryFn: async () => {
+      const { data } = await axiosPublic.get("/product");
+      return data;
+    },
+  });
 
   return (
     <div className="min-h-screen bg-gray-100 px-3 py-5 sm:px-5 lg:px-6">
