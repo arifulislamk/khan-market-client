@@ -9,13 +9,14 @@ const Product = () => {
   // console.log(data, "data");
   const axiosPublic = useAxiosCommon();
 
-  const { data: data } = useQuery({
+  const { data =[] } = useQuery({
     queryKey: ["data"],
     queryFn: async () => {
       const { data } = await axiosPublic.get("/product");
       return data;
     },
   });
+  console.log(data,"data paischi") ;
 
   return (
     <div className="min-h-screen bg-gray-100 px-3 py-5 sm:px-5 lg:px-6">
@@ -37,7 +38,7 @@ const Product = () => {
           2xl:gap-4
         "
       >
-        {data?.map((product) => (
+        { data?.map((product) => (
           <ProductCard key={product?.productId} product={product} />
         ))}
       </div>
