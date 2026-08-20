@@ -1,9 +1,10 @@
 import React, { useContext, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "../Authentication/AuthProvider";
 const Register = () => {
   const auth = useContext(AuthContext);
   const { createuser } = auth;
+  const navigate = useNavigate()
   const [formData, setFormData] = useState({
     email: "",
     phone: "",
@@ -38,6 +39,7 @@ const Register = () => {
       setLoading(true);
       const result = await createuser(email, password);
       console.log("User created successfully:", result);
+      navigate("/")
     } catch (error) {
       console.log("Registration error:", error);
       if (error.code === "auth/email-already-in-use") {

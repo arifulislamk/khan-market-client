@@ -4,7 +4,7 @@ import {Link} from "react-router-dom";
 import {AuthContext} from "../Authentication/AuthProvider";
 
 const Navbar=()=>{
-  const {user}=useContext(AuthContext);
+  const {user,signout}=useContext(AuthContext);
   const [open,setOpen]=useState(false),ref=useRef();
 
   useEffect(()=>{
@@ -49,6 +49,7 @@ const Navbar=()=>{
               {user?<>
                 <p className="px-3 py-2 text-sm font-semibold truncate border-b">{user.displayName||user.email}</p>
                 <Link to="/orders" className="block px-3 py-2 text-sm hover:bg-amber-50">Orders</Link>
+                <Link onClick={signout} className="block px-3 py-2 text-sm hover:bg-amber-50">LogOut</Link>
               </>:<>
                 <Link to="/login" className="block px-3 py-2 text-sm hover:bg-amber-50">Login</Link>
                 <Link to="/register" className="block px-3 py-2 text-sm hover:bg-amber-50">Register</Link>
