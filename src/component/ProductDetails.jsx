@@ -1,20 +1,20 @@
-import { useMutation, useQuery } from "@tanstack/react-query";
-import React, { useState } from "react";
+import { useMutation } from "@tanstack/react-query";
+import  { useContext, useState } from "react";
 import { Link, useLoaderData, useNavigate } from "react-router-dom";
 import useAxiosCommon from "../hooks/useAxiosCommon";
+import { AuthContext } from "../Authentication/AuthProvider";
 
 const ProductDetails = () => {
+  const { user } = useContext(AuthContext);
   const product = useLoaderData();
   const axiosPublic = useAxiosCommon();
   const navigate = useNavigate();
-  const [quantity, setQuantity] = useState(1);
+  const [modal, setModal] = useState(false);
 
   const discount = Math.round(
     ((product.price - product.discountPrice) / product.price) * 100,
   );
-
   const saving = product.price - product.discountPrice;
-  const totalPrice = product.discountPrice * quantity;
 
   const productInfo = [
     ["Product ID", product.productId],
@@ -30,28 +30,47 @@ const ProductDetails = () => {
   ];
 
   const { mutate } = useMutation({
-    mutationFn: async (data) => {
-      return await axiosPublic.post("/cart", data);
-    },
-    onSuccess: () => {
-      console.log("post hoisecart data");
-    },
+    mutationFn: (data) => axiosPublic.post("/cart", data),
+    onSuccess: () => console.log("post hoise cart data"),
   });
 
-  const cartdata = { name: " ariful", id: product._id };
-  const handleBuyNow = (e) => {
-    mutate(cartdata, {
-      onSuccess: () => {
-        navigate("/cart");
-      },
-    });
+  const cartdata = {
+    name: user?.displayName,
+    email: user?.email,
+    id: product._id,
   };
-  const handleAddCart = (e) => {
-    mutate(cartdata);
+
+  const saveLocal = () => {
+    const cart = JSON.parse(localStorage.getItem("cart")) || [];
+    if (!cart.includes(product._id)) {
+      localStorage.setItem("cart", JSON.stringify([...cart, product._id]));
+    }
+  };
+
+  const handleAddCart = () => {
+    if (user) mutate(cartdata);
+    else saveLocal();
+    setModal(true);
+    setTimeout(() => setModal(false), 1500);
+  };
+  const handleBuyNow = () => {
+    if (user) {
+      mutate(cartdata, {
+        onSuccess: () => navigate("/cart"),
+      });
+    } else {
+      saveLocal();
+      navigate("/cart");
+    }
   };
 
   return (
     <div className="min-h-screen bg-[#f5f5f3] py-5 md:py-7 px-4">
+      {modal && (
+        <div className="fixed top-5 right-5 z-50 bg-gray-950 text-white px-4 py-3 rounded-lg shadow-lg text-sm">
+          Product added to cart ✓
+        </div>
+      )}
       <div className="max-w-7xl mx-auto">
         <div className="flex items-center gap-2 text-sm text-gray-500 mb-4">
           <Link to="/">
@@ -68,7 +87,6 @@ const ProductDetails = () => {
             {product.name}
           </span>
         </div>
-
         <div className="bg-white rounded-[24px] border border-gray-200/80 shadow-[0_12px_45px_rgba(0,0,0,0.07)] overflow-hidden">
           <div className="grid lg:grid-cols-2">
             <div className="relative bg-gradient-to-br from-[#fafafa] via-[#f5f5f5] to-[#eeeeec] p-5 md:p-7 lg:p-9">
@@ -96,7 +114,6 @@ const ProductDetails = () => {
                     {product.productId}
                   </p>
                 </div>
-
                 <div className="text-right">
                   <p className="text-[10px] uppercase tracking-[0.2em] text-gray-400">
                     Brand
@@ -107,13 +124,14 @@ const ProductDetails = () => {
                 </div>
               </div>
             </div>
-
             <div className="p-6 md:p-8 lg:p-9 flex flex-col justify-center">
               <div className="flex items-center gap-3 mb-3">
                 <span className="text-xs font-bold uppercase tracking-[0.18em] text-[#ad861b]">
                   {product.category}
                 </span>
+
                 <span className="w-1 h-1 rounded-full bg-gray-300" />
+
                 <span
                   className={`text-xs font-semibold ${
                     product.stock > 0 ? "text-green-600" : "text-red-500"
@@ -132,10 +150,11 @@ const ProductDetails = () => {
                 <span className="text-sm font-semibold text-gray-700">
                   {product.rating}
                 </span>
-                <span className="text-sm text-gray-400">Customer Rating</span>
+                <span className="text-sm text-gray-400">
+                  Customer Rating
+                </span>
               </div>
               <div className="h-px bg-gray-200 my-5" />
-
               <div>
                 <p className="text-[11px] uppercase tracking-[0.2em] text-gray-400 font-semibold mb-2">
                   Our Price
@@ -153,12 +172,16 @@ const ProductDetails = () => {
                     Save ৳{saving.toLocaleString()}
                   </span>
                   <span className="w-1 h-1 rounded-full bg-gray-300" />
-                  <span className="text-sm text-gray-500">Limited offer</span>
+                  <span className="text-sm text-gray-500">
+                    Limited offer
+                  </span>
                 </div>
               </div>
               <div className="mt-5">
                 <div className="flex justify-between items-center mb-2">
-                  <span className="text-sm text-gray-500">Availability</span>
+                  <span className="text-sm text-gray-500">
+                    Availability
+                  </span>
                   <span className="text-sm font-semibold text-gray-800">
                     {product.stock} units available
                   </span>
@@ -172,45 +195,27 @@ const ProductDetails = () => {
                   />
                 </div>
               </div>
-              <div className="mt-5">
-                <p className="text-sm font-semibold text-gray-800 mb-2">
-                  Quantity
-                </p>
-                <div className="inline-flex items-center h-12 rounded-xl border-2 border-gray-900 bg-white overflow-hidden">
-                  <button
-                    onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                    className="w-12 h-full bg-gray-900 text-white text-xl font-medium hover:bg-[#c49a24] hover:text-black transition"
-                  >
-                    −
-                  </button>
-                  <div className="w-14 h-full flex items-center justify-center text-gray-950 text-lg font-bold border-x border-gray-200">
-                    {quantity}
-                  </div>
-                  <button
-                    onClick={() =>
-                      setQuantity(Math.min(product.stock, quantity + 1))
+
+              <div className="grid grid-cols-3 gap-4 mt-5 pt-5 border-t border-gray-200">
+                {features.map(([title, subtitle], index) => (
+                  <div
+                    key={title}
+                    className={
+                      index === 1
+                        ? "border-x border-gray-200 px-4"
+                        : ""
                     }
-                    className="w-12 h-full bg-gray-900 text-white text-xl font-medium hover:bg-[#c49a24] hover:text-black transition"
                   >
-                    +
-                  </button>
-                </div>
+                    <p className="text-xs font-bold text-gray-900">
+                      {title}
+                    </p>
+                    <p className="text-[10px] text-gray-400 mt-1">
+                      {subtitle}
+                    </p>
+                  </div>
+                ))}
               </div>
-              <div className="mt-5 flex items-center justify-between rounded-2xl bg-[#f8f8f6] border border-gray-200 px-5 py-3.5">
-                <div>
-                  <p className="text-xs text-gray-400 uppercase tracking-wider">
-                    Total Amount
-                  </p>
 
-                  <p className="text-sm text-gray-500 mt-1">
-                    {quantity} × ৳{product.discountPrice.toLocaleString()}
-                  </p>
-                </div>
-
-                <span className="text-2xl font-extrabold text-gray-950">
-                  ৳{totalPrice.toLocaleString()}
-                </span>
-              </div>
               <div className="grid sm:grid-cols-2 gap-3 mt-4">
                 <button
                   onClick={handleAddCart}
@@ -228,19 +233,6 @@ const ProductDetails = () => {
                   Buy Now
                 </button>
               </div>
-              <div className="grid grid-cols-3 gap-4 mt-5 pt-5 border-t border-gray-200">
-                {features.map(([title, subtitle], index) => (
-                  <div
-                    key={title}
-                    className={
-                      index === 1 ? "border-x border-gray-200 px-4" : ""
-                    }
-                  >
-                    <p className="text-xs font-bold text-gray-900">{title}</p>
-                    <p className="text-[10px] text-gray-400 mt-1">{subtitle}</p>
-                  </div>
-                ))}
-              </div>
             </div>
           </div>
 
@@ -251,6 +243,7 @@ const ProductDetails = () => {
               </h2>
               <div className="h-px flex-1 bg-gray-200" />
             </div>
+
             <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
               {productInfo.map(([label, value]) => (
                 <div
@@ -260,7 +253,9 @@ const ProductDetails = () => {
                   <p className="text-[10px] uppercase tracking-[0.15em] text-gray-400">
                     {label}
                   </p>
-                  <p className="mt-2 font-bold text-gray-900">{value}</p>
+                  <p className="mt-2 font-bold text-gray-900">
+                    {value}
+                  </p>
                 </div>
               ))}
             </div>

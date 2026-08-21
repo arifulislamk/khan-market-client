@@ -41,18 +41,27 @@ const Navbar=()=>{
           </button>
         </Link>
         <div ref={ref} className="relative shrink-0">
-          <button onClick={()=>setOpen(!open)} className="btn btn-ghost btn-sm p-1" title="Profile">
-            <img src="https://i.pravatar.cc/100?img=12" alt="Profile" className="w-6 h-6 sm:w-8 sm:h-8 rounded-full object-cover"/>
-          </button>
+          {user ? (
+  <button onClick={()=>setOpen(!open)} className="btn btn-ghost btn-sm p-1" title="Profile">
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.8} stroke="currentColor" className="w-4 h-4 sm:w-6 sm:h-6">
+      <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.5 20.118a7.5 7.5 0 0 1 15 0A17.933 17.933 0 0 1 12 21.75a17.933 17.933 0 0 1-7.5-1.632Z"/>
+    </svg>
+  </button>
+) : (
+  <Link to="/login" className="btn btn-ghost btn-sm p-1" title="Profile">
+    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.8} stroke="currentColor" className="w-4 h-6 sm:w-6 sm:h-6">
+      <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 6a3.75 3.75 0 1 1-7.5 0 3.75 3.75 0 0 1 7.5 0ZM4.5 20.118a7.5 7.5 0 0 1 15 0A17.933 17.933 0 0 1 12 21.75a17.933 17.933 0 0 1-7.5-1.632Z"/>
+    </svg>
+  </Link>
+)}
           {open&&(
             <div className="absolute right-0 top-11 w-36 bg-white text-gray-800 border border-gray-200 rounded-lg shadow-lg z-50 overflow-hidden">
-              {user?<>
+              {user &&<>
                 <p className="px-3 py-2 text-sm font-semibold truncate border-b">{user.displayName||user.email}</p>
-                <Link to="/orders" className="block px-3 py-2 text-sm hover:bg-amber-50">Orders</Link>
-                <Link onClick={signout} className="block px-3 py-2 text-sm hover:bg-amber-50">LogOut</Link>
-              </>:<>
-                <Link to="/login" className="block px-3 py-2 text-sm hover:bg-amber-50">Login</Link>
-                <Link to="/register" className="block px-3 py-2 text-sm hover:bg-amber-50">Register</Link>
+                <Link to="/orders" className="block px-3 py-2 text-sm hover:bg-amber-50">Profile</Link>
+                <Link to="/orders" className="block px-3 py-2 text-sm hover:bg-amber-50">Online Orders History</Link>
+                <Link to="/orders" className="block px-3 py-2 text-sm hover:bg-amber-50">Store Purchase history</Link>
+                <Link onClick={signout} className="block px-3 py-2 text-sm hover:bg-amber-50">Sign Out</Link>
               </>}
             </div>
           )}
