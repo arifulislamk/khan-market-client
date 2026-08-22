@@ -1,5 +1,5 @@
 import { useMutation } from "@tanstack/react-query";
-import  { useContext, useState } from "react";
+import { useContext, useState } from "react";
 import { Link, useLoaderData, useNavigate } from "react-router-dom";
 import useAxiosCommon from "../hooks/useAxiosCommon";
 import { AuthContext } from "../Authentication/AuthProvider";
@@ -31,7 +31,18 @@ const ProductDetails = () => {
 
   const { mutate } = useMutation({
     mutationFn: (data) => axiosPublic.post("/cart", data),
-    onSuccess: () => console.log("post hoise cart data"),
+    onSuccess: () => {
+      console.log("post hoise cart data");
+      setModal(true);
+      setTimeout(() => setModal(false), 1500);
+    },
+    onError: (error) => {
+      if (error.response?.status === 409) {
+        console.log("Already cart e ache");
+        return;
+      }
+      console.log("Cart e add korte problem hoise", error);
+    },
   });
 
   const cartdata = {
@@ -50,13 +61,20 @@ const ProductDetails = () => {
   const handleAddCart = () => {
     if (user) mutate(cartdata);
     else saveLocal();
-    setModal(true);
-    setTimeout(() => setModal(false), 1500);
   };
   const handleBuyNow = () => {
     if (user) {
       mutate(cartdata, {
-        onSuccess: () => navigate("/cart"),
+        onSuccess: () => {
+          navigate("/cart");
+        },
+        onError: (error) => {
+          if (error.response?.status === 409) {
+            navigate("/cart");
+            return;
+          }
+          console.log("Buy Now failed:", error);
+        },
       });
     } else {
       saveLocal();
@@ -150,9 +168,7 @@ const ProductDetails = () => {
                 <span className="text-sm font-semibold text-gray-700">
                   {product.rating}
                 </span>
-                <span className="text-sm text-gray-400">
-                  Customer Rating
-                </span>
+                <span className="text-sm text-gray-400">Customer Rating</span>
               </div>
               <div className="h-px bg-gray-200 my-5" />
               <div>
@@ -172,16 +188,12 @@ const ProductDetails = () => {
                     Save ৳{saving.toLocaleString()}
                   </span>
                   <span className="w-1 h-1 rounded-full bg-gray-300" />
-                  <span className="text-sm text-gray-500">
-                    Limited offer
-                  </span>
+                  <span className="text-sm text-gray-500">Limited offer</span>
                 </div>
               </div>
               <div className="mt-5">
                 <div className="flex justify-between items-center mb-2">
-                  <span className="text-sm text-gray-500">
-                    Availability
-                  </span>
+                  <span className="text-sm text-gray-500">Availability</span>
                   <span className="text-sm font-semibold text-gray-800">
                     {product.stock} units available
                   </span>
@@ -201,17 +213,11 @@ const ProductDetails = () => {
                   <div
                     key={title}
                     className={
-                      index === 1
-                        ? "border-x border-gray-200 px-4"
-                        : ""
+                      index === 1 ? "border-x border-gray-200 px-4" : ""
                     }
                   >
-                    <p className="text-xs font-bold text-gray-900">
-                      {title}
-                    </p>
-                    <p className="text-[10px] text-gray-400 mt-1">
-                      {subtitle}
-                    </p>
+                    <p className="text-xs font-bold text-gray-900">{title}</p>
+                    <p className="text-[10px] text-gray-400 mt-1">{subtitle}</p>
                   </div>
                 ))}
               </div>
@@ -253,9 +259,7 @@ const ProductDetails = () => {
                   <p className="text-[10px] uppercase tracking-[0.15em] text-gray-400">
                     {label}
                   </p>
-                  <p className="mt-2 font-bold text-gray-900">
-                    {value}
-                  </p>
+                  <p className="mt-2 font-bold text-gray-900">{value}</p>
                 </div>
               ))}
             </div>
