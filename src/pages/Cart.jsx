@@ -7,7 +7,23 @@ const Cart = () => {
   const [cartItems, setCartItems] = useState([]);
   const { user } = useContext(AuthContext);
   const axiosPublic = useAxiosCommon();
-
+  useEffect(() => {
+    if (user) return;
+    const getlocalcart = async () => {
+      const local = JSON.parse(localStorage.getItem("cart")) || [];
+      if (local.length === 0) {
+        setCartItems([]);
+        return;
+      }
+      console.log(local, "localstorage");
+      const { data: datalocal } = await axiosPublic.post("/locatCartProduct", {
+        ids: local,
+      });
+      setCartItems(datalocal);
+      console.log(datalocal, "ashenai");
+    };
+    getlocalcart();
+  }, [user]);
   const { data, isLoading } = useQuery({
     queryKey: ["cart", user?.email],
     enabled: !!user?.email,
